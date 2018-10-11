@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.revature</groupId>
-  <artifactId>servlet</artifactId>
+  <artifactId>ers-servlet</artifactId>
   <packaging>war</packaging>
   <version>0.0.1-SNAPSHOT</version>
   <name>servlet Maven Webapp</name>
@@ -14,6 +14,11 @@
   </properties>
   
   <dependencies>
+  	<dependency>
+  		<groupId>javax.servlet</groupId>
+  		<artifactId>javax.servlet-api</artifactId>
+  		<version>3.1.0</version>
+  	</dependency>
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -32,6 +37,6 @@
     </dependency>
   </dependencies>
   <build>
-    <finalName>servlet</finalName>
+    <finalName>ers-servlet</finalName>
   </build>
 </project>
