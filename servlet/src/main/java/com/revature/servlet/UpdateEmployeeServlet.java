@@ -15,7 +15,7 @@ import com.revature.interfaces.User;
 import com.revature.model.EmployeeUser;
 import com.revature.repository.EmployeeUserDao;
 
-@WebServlet("/update")
+@WebServlet("/update/*")
 public class UpdateEmployeeServlet extends HttpServlet {
 	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		HttpSession sess = req.getSession();
@@ -75,5 +75,9 @@ public class UpdateEmployeeServlet extends HttpServlet {
 		}
 		
 		eud.saveEmployee(myGuy);
+		
+		RequestDispatcher rd = req.getRequestDispatcher("/display");
+		rd.forward(req, resp);
+		
 	}
 }
