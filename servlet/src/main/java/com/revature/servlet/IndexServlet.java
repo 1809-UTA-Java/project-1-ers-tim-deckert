@@ -9,12 +9,17 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/home")
+import org.hibernate.Session;
+
+import com.revature.resources.HibernateUtil;
+
+//@WebServlet("/home")
 public class IndexServlet extends HttpServlet {
 	
 	@Override
 	protected void doGet (HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		RequestDispatcher rd = req.getRequestDispatcher("index.html");
+		
 		rd.forward(req, resp);
 	}
 }
