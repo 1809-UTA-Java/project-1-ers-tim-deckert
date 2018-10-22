@@ -5,11 +5,13 @@ import java.sql.Timestamp;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import com.revature.interfaces.Reimbursement;
@@ -20,6 +22,8 @@ import com.revature.repository.ReimbursementStatusDao;
 public class EmployeeReimbursement implements Reimbursement {
 	
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "R_Sequence")
+	@SequenceGenerator(name = "R_Sequence", sequenceName = "R_Sequence", allocationSize = 1, initialValue = 1)
 	@Column(name = "R_ID")
 	private Integer r_id;
 	
@@ -38,20 +42,19 @@ public class EmployeeReimbursement implements Reimbursement {
 	@Column(name = "R_RESOLVED")
 	private Timestamp r_resolved;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "U_ID_AUTHOR")
 	private EmployeeUser author;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "U_ID_RESOLVER")
 	private ManagerUser resolver;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "RT_TYPE")
 	private ReimbursementType type;
 	
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@Enumerated
+	@ManyToOne(fetch=FetchType.EAGER)
 	@JoinColumn(name = "RT_STATUS")
 	private ReimbursementStatus status;
 	//private boolean resolved;
@@ -84,6 +87,7 @@ public class EmployeeReimbursement implements Reimbursement {
 		this.author = author;
 		this.type = type;
 		this.r_submitted = new Timestamp(System.currentTimeMillis());
+		this.status = new ReimbursementStatus();
 	}
 
 	
@@ -96,6 +100,7 @@ public class EmployeeReimbursement implements Reimbursement {
 		this.author = author;
 		this.type = type;
 		this.r_submitted = new Timestamp(System.currentTimeMillis());
+		this.status = new ReimbursementStatus();
 	}
 
 	@Override

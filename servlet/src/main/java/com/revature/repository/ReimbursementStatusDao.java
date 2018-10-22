@@ -8,6 +8,6 @@ import com.revature.resources.HibernateUtil;
 public class ReimbursementStatusDao {
 	public ReimbursementStatus status(Integer statusNum) {
 		Session session = HibernateUtil.getSession();
-		return (ReimbursementStatus) session.createQuery("from ReimbursementStatus rs where rs.rsId=:num").setInteger("num", statusNum);
+		return (ReimbursementStatus) session.createQuery("from ReimbursementStatus rs where rs.rsId=:num").setInteger("num", statusNum).uniqueResult();
 	}
 }

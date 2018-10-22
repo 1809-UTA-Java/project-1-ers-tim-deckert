@@ -20,9 +20,9 @@ public class EmployeeReimbursementDaoTest {
 
 	@Test
 	public void testGetReimbusementsByStatus() {
-		erd.getReimbusementsByStatus("approved");
-		erd.getReimbusementsByStatus("pending");
-		erd.getReimbusementsByStatus("denied");
+		erd.getReimbursements("approved");
+		erd.getReimbursements("pending");
+		erd.getReimbursements("denied");
 		fail("Not yet implemented");
 	}
 

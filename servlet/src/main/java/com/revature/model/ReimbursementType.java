@@ -14,4 +14,8 @@ public class ReimbursementType {
 	
 	@Column(name = "RT_TYPE")
 	private String rtType;
+	
+	public String getType() {
+		return rtType;
+	}
 }

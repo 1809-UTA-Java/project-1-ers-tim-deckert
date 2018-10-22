@@ -30,4 +30,8 @@ public class UserRoles {
 		return "UserRoles [urId=" + urId + ", role=" + role + "]";
 	}
 	
+	public String role() {
+		return this.role;
+	}
+	
 }

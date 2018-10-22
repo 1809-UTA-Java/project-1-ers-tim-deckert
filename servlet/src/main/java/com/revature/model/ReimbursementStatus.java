@@ -14,4 +14,9 @@ public class ReimbursementStatus {
 	
 	@Column(name = "RS_STATUS")
 	private String rsStatus;
+	
+	public ReimbursementStatus() {
+		rsId = 1;
+		rsStatus = "Pending";
+	}
 }

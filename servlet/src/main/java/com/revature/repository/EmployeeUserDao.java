@@ -30,6 +30,20 @@ public class EmployeeUserDao {
 		return employees.get(0);
 	}
 	
+	public EmployeeUser getEmployee(String username) {
+		EmployeeUser found = null;
+		List<EmployeeUser> employees = new ArrayList<>();
+		
+		Session session = HibernateUtil.getSession();
+		
+		employees = session.createQuery("from EmployeeUser e where e.username=:eUname").setString("eUname", username).list();
+		if (employees.isEmpty()) {
+			return null;
+		}
+		
+		return employees.get(0);
+	}
+	
 	public void saveEmployee(EmployeeUser e) {
 		Session session = HibernateUtil.getSession();
 		Transaction tx = session.beginTransaction();

@@ -1,40 +1,62 @@
 package com.revature.model;
 
-import java.util.List;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
+import java.util.ArrayList;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import com.revature.interfaces.Reimbursement;
 import com.revature.interfaces.User;
 
 @Entity
 @Table(name = "ERS_USERS")
+@Inheritance(strategy=InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(discriminatorType = DiscriminatorType.INTEGER,
+					 name = "UR_ID")
+@DiscriminatorValue("2")
 public class EmployeeUser implements User {
 
 	@Id
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "U_Sequence")
+	@SequenceGenerator(name = "U_Sequence", sequenceName = "U_Sequence", allocationSize = 1, initialValue = 3)
 	@Column(name = "U_ID")
-	private Integer id;
+	protected Integer id;
 	@Column(name = "U_USERNAME")
-	private String username;
+	protected String username;
 	@Column(name = "U_PASSWORD")
-	private String password;
+	protected String password;
 	@Column(name = "U_FIRSTNAME")
-	private String firstname;
+	protected String firstname;
 	@Column(name = "U_LASTNAME")
-	private String lastname;
+	protected String lastname;
 	@Column(name = "U_EMAIL")
-	private String email;
+	protected String email;
 
-	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	@JoinColumn(name = "UR_ID")
-	private UserRoles role;
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name = "UR_ID", insertable=false, updatable=false)
+	protected UserRoles role;
 	
 	public EmployeeUser() {
 		super();
@@ -52,6 +74,17 @@ public class EmployeeUser implements User {
 		this.email = email;
 		this.role = role;
 	}
+	
+	public EmployeeUser(Integer id, String username, String firstname, String lastname, String email,
+			UserRoles role) {
+		super();
+		this.id = id;
+		this.username = username;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.email = email;
+		this.role = role;
+	}
 
 	@Override
 	public String toString() {
@@ -60,30 +93,114 @@ public class EmployeeUser implements User {
 	}
 
 	@Override
-	public User login() {
+	public User login(String password) {
+		if (password.equals(this.password)) {
+			if (this.role.role().equals("Manager")) {
+				return new ManagerUser(this.id, this.username, this.firstname, this.lastname, this.email, this.role);
+			}
+			else {
+				return new EmployeeUser(this.id, this.username, this.firstname, this.lastname, this.email, this.role);
+			}
+		}
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void logout() {
+	public void logout(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
 		// TODO Auto-generated method stub
-
+		RequestDispatcher rd = req.getRequestDispatcher("logout");
+		rd.forward(req, res);
 	}
 
 	@Override
-	public List<Reimbursement> load() {
+	public void service(String toCall, HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
 		// TODO Auto-generated method stub
-		return null;
+		if (toCall.equals("Submit a reimbursement")) {
+			this.submit(req, res);
+		} else if (toCall.equals("View your pending reimburements")) {
+			this.viewPending(req, res);
+		} else if (toCall.equals("View your resolved reimburements")) {
+			this.viewResolved(req, res);
+		} else if (toCall.equals("View your information")) {
+			this.viewInfo(req, res);
+		} else if (toCall.equals("Update your information")) {
+			this.update(req, res);
+		} else if (toCall.equals("Logout")) {
+			this.logout(req,res);
+		} else {
+			//this.submit();
+		}
 	}
 
 	@Override
-	public void display() {
+	public ArrayList<String> display() {
 		// TODO Auto-generated method stub
+		ArrayList<String> options = new ArrayList<>();
+		
+		options.add("Submit a reimbursement");
+		options.add("View your pending reimburements");
+		options.add("View your resolved reimburements");
+		options.add("View your information");
+		options.add("Update your information");
+		options.add("Logout");
+		
+		return options;
 
 	}
+		
+	public void submit(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
+		RequestDispatcher rd = req.getRequestDispatcher("submit");
+		rd.forward(req, res);
+	}
+
+	public void viewPending(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
+		//RequestDispatcher rd = req.getRequestDispatcher("reimbursements/pending/"+this.id);
+		res.sendRedirect("reimbursements/pending/"+this.id);
+	}
+
+	public void viewResolved(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
+		//RequestDispatcher rd = req.getRequestDispatcher("reimbursements/resolved/"+this.id);
+		res.sendRedirect("reimbursements/resolved/"+this.id);
+	}
+
+	public void viewInfo(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
+		//RequestDispatcher rd = req.getRequestDispatcher("employees/"+this.id);
+		res.sendRedirect("employees/"+this.id);
+	}
+
+	public void update(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
+		//RequestDispatcher rd = req.getRequestDispatcher("update/"+this.id);
+		res.sendRedirect("update/"+this.id);
+	}
+	
 	public String getUsername() {
 		return this.username;
 	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public String getFirstname() {
+		return firstname;
+	}
+
+	public String getLastname() {
+		return lastname;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public UserRoles getRole() {
+		return role;
+	}
+	
 
 }
