@@ -33,8 +33,8 @@ public class EmployeeReimbursement implements Reimbursement {
 	@Column(name = "R_DESCRIPTION")
 	private String r_desc;
 	
-	@Column(name = "R_RECIEPT")
-	private byte[] r_reciept;
+	@Column(name = "R_RECEIPT")
+	private byte[] r_receipt;
 	
 	@Column(name = "R_SUBMITTED")
 	private Timestamp r_submitted;
@@ -55,7 +55,7 @@ public class EmployeeReimbursement implements Reimbursement {
 	private ReimbursementType type;
 	
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name = "RT_STATUS")
+	@JoinColumn(name = "RS_STATUS")
 	private ReimbursementStatus status;
 	//private boolean resolved;
 	
@@ -64,14 +64,14 @@ public class EmployeeReimbursement implements Reimbursement {
 		// TODO Auto-generated constructor stub
 	}
 
-	public EmployeeReimbursement(Integer r_id, Double r_amount, String r_desc, byte[] r_reciept,
+	public EmployeeReimbursement(Integer r_id, Double r_amount, String r_desc, byte[] r_receipt,
 			Timestamp r_submitted, Timestamp r_resolved, EmployeeUser author, ManagerUser resolver, ReimbursementType type,
 			ReimbursementStatus status) {
 		super();
 		this.r_id = r_id;
 		this.r_amount = r_amount;
 		this.r_desc = r_desc;
-		this.r_reciept = r_reciept;
+		this.r_receipt = r_receipt;
 		this.r_submitted = r_submitted;
 		this.r_resolved = r_resolved;
 		this.author = author;
@@ -91,12 +91,12 @@ public class EmployeeReimbursement implements Reimbursement {
 	}
 
 	
-	public EmployeeReimbursement(Double r_amount, String r_desc, byte[] r_reciept, EmployeeUser author,
+	public EmployeeReimbursement(Double r_amount, String r_desc, byte[] r_receipt, EmployeeUser author,
 			ReimbursementType type) {
 		super();
 		this.r_amount = r_amount;
 		this.r_desc = r_desc;
-		this.r_reciept = r_reciept;
+		this.r_receipt = r_receipt;
 		this.author = author;
 		this.type = type;
 		this.r_submitted = new Timestamp(System.currentTimeMillis());
@@ -109,9 +109,47 @@ public class EmployeeReimbursement implements Reimbursement {
 		ReimbursementStatusDao rsd = new ReimbursementStatusDao();
 		this.status = rsd.status(status);
 		this.r_resolved = new Timestamp(System.currentTimeMillis());
-	/*	this.resolver = resolver;
-		resolved = !resolved;
-		return resolved;*/
 	}
+
+	public Integer getId() {
+		return r_id;
+	}
+
+	public Double getAmount() {
+		return r_amount;
+	}
+
+	public String getDesc() {
+		return r_desc;
+	}
+
+	public byte[] getReceipt() {
+		return r_receipt;
+	}
+
+	public Timestamp getSubmitted() {
+		return r_submitted;
+	}
+
+	public Timestamp getResolved() {
+		return r_resolved;
+	}
+
+	public EmployeeUser getAuthor() {
+		return author;
+	}
+
+	public ManagerUser getResolver() {
+		return resolver;
+	}
+
+	public ReimbursementType getType() {
+		return type;
+	}
+
+	public ReimbursementStatus getStatus() {
+		return status;
+	}
+	
 
 }

@@ -47,7 +47,7 @@ public class EmployeeUserDao {
 	public void saveEmployee(EmployeeUser e) {
 		Session session = HibernateUtil.getSession();
 		Transaction tx = session.beginTransaction();
-		session.save(e);
+		session.saveOrUpdate(e);
 		tx.commit();
 	}
 

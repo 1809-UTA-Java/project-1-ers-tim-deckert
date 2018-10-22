@@ -156,12 +156,12 @@ public class EmployeeUser implements User {
 
 	public void viewPending(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
 		//RequestDispatcher rd = req.getRequestDispatcher("reimbursements/pending/"+this.id);
-		res.sendRedirect("reimbursements/pending/"+this.id);
+		res.sendRedirect("reimbursements/Pending/"+this.id);
 	}
 
 	public void viewResolved(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
 		//RequestDispatcher rd = req.getRequestDispatcher("reimbursements/resolved/"+this.id);
-		res.sendRedirect("reimbursements/resolved/"+this.id);
+		res.sendRedirect("reimbursements/Resolved/"+this.id);
 	}
 
 	public void viewInfo(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
@@ -202,5 +202,20 @@ public class EmployeeUser implements User {
 		return role;
 	}
 	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+
+	public void setFirstname(String firstname) {
+		this.firstname = firstname;
+	}
+
+	public void setLastname(String lastname) {
+		this.lastname = lastname;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
 }

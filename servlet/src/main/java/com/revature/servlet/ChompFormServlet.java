@@ -3,6 +3,7 @@ package com.revature.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -24,7 +25,11 @@ public class ChompFormServlet extends HttpServlet {
 		
 		//PrintWriter pw = res.getWriter();
 		//pw.println(button);
-		
-		myGuy.service(button, req, res);
+		try {
+			myGuy.service(button, req, res);
+		} catch (NullPointerException ex) {
+			RequestDispatcher rd = req.getRequestDispatcher("/");
+			rd.forward(req, res);
+		}
 	}
 }

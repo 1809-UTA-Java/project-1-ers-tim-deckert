@@ -17,7 +17,10 @@ public class EmployeeReimbursementDao {
 	
 	public List<EmployeeReimbursement> getReimbursements(String status) {
 		Session session = HibernateUtil.getSession();
-		return session.createQuery("from EmployeeReimbursement e where e.status=:status").setString("status", status).list();
+		if (status.equals("Pending")) {
+			return session.createQuery("from EmployeeReimbursement e where e.status=1").list();
+		}
+		return session.createQuery("from EmployeeReimbursement e where e.status=2 or e.status=3").list();
 	}
 	
 	public List<EmployeeReimbursement> getReimbursements(Integer authorId) {
@@ -27,14 +30,22 @@ public class EmployeeReimbursementDao {
 	
 	public List<EmployeeReimbursement> getReimbursements(String status, Integer authorId) {
 		Session session = HibernateUtil.getSession();
-		return session.createQuery("from EmployeeReimbursement e where e.status=:status and e.author=:author")
-				.setString("status", status).setInteger("author", authorId).list();
+		if (status.equals("Pending")) {
+			return session.createQuery("from EmployeeReimbursement e where e.status=1 and e.author=:author").setInteger("author", authorId).list();
+		}
+		return session.createQuery("from EmployeeReimbursement e where (e.status=2 or e.status=3) and e.author=:author").setInteger("author", authorId).list();
+	}
+	
+	public EmployeeReimbursement getReimbursement(Integer reId) {
+		Session session = HibernateUtil.getSession();
+		return (EmployeeReimbursement) session.createQuery("from EmployeeReimbursement e where e.r_id=:id")
+				.setInteger("id", reId).uniqueResult();
 	}
 	
 	public void saveReimbursement(EmployeeReimbursement er) {
 		Session session = HibernateUtil.getSession();
 		Transaction tx = session.beginTransaction();
-		session.save(er);
+		session.saveOrUpdate(er);
 		tx.commit();
 	}
 }

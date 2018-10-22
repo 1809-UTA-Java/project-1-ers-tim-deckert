@@ -2,6 +2,7 @@ package com.revature.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Base64;
 import java.util.List;
 
 import javax.servlet.ServletException;
@@ -11,8 +12,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.revature.interfaces.User;
 import com.revature.model.EmployeeReimbursement;
 import com.revature.model.ManagerUser;
@@ -27,11 +26,17 @@ public class ReimbursementDisplayServlet extends HttpServlet {
 		String path = req.getPathInfo();
 		String[] pathSplits = path.split("/");
 		
-		resp.setContentType("text/xml");
+		resp.setContentType("text/html");
 		PrintWriter pw = resp.getWriter();
+		pw.println("<html>");
+		pw.println("<head>");
+		pw.println("<title>");
+		pw.println("reimbursements");
+		pw.println("</title>");
+		pw.println("</head>");
+		pw.println("<body>");
 		
 		EmployeeReimbursementDao erd = new EmployeeReimbursementDao();
-		ObjectMapper om = new XmlMapper();
 		
 		if(pathSplits.length < 2 || pathSplits.length > 3) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
@@ -41,27 +46,28 @@ public class ReimbursementDisplayServlet extends HttpServlet {
 		String statusToSearch = pathSplits[1];
 		
 		if (pathSplits.length == 2 && myGuy instanceof ManagerUser) {
-			if (statusToSearch.equals("emp")) {
-				
-			}
 			List<EmployeeReimbursement>reimbursements = erd.getReimbursements(statusToSearch);
-			String obj = om.writeValueAsString(reimbursements);
-			pw.println(obj);
+			for (EmployeeReimbursement reimbursement : reimbursements) {
+				htmlReimbursement(pw, reimbursement);
+			}
 		}
 		else if (pathSplits.length == 3) {
 			int employeeId = Integer.parseInt(pathSplits[2]);
-			List <EmployeeReimbursement> found = erd.getReimbursements(statusToSearch, employeeId);
-			if(found != null) {
-				String obj = om.writeValueAsString(found);
-				pw.println(obj);
+			if (statusToSearch.equals("emp")) {
+				List <EmployeeReimbursement> reimbursements = erd.getReimbursements(employeeId); 
+				for (EmployeeReimbursement reimbursement : reimbursements) {
+					htmlReimbursement(pw, reimbursement);
+				}
+			}
+			else {
+				List <EmployeeReimbursement> reimbursements = erd.getReimbursements(statusToSearch, employeeId); 
+				for (EmployeeReimbursement reimbursement : reimbursements) {
+					htmlReimbursement(pw, reimbursement);
+				}
 			}
 		}
-		
-		resp.setContentType("text/html");
-		pw.println("<html>");
 	
-		pw.println("<body>");
-		pw.println("<form action=\"display\" method=\"post\">");
+		pw.println("<form action=\"/ers-servlet/display\" method=\"post\">");
 		pw.println("<button type=\"submit\" name=\"button\" value=\"home\">");
 		pw.println("done");
 		pw.println("</button><br></br>");
@@ -71,5 +77,52 @@ public class ReimbursementDisplayServlet extends HttpServlet {
 		
 		pw.close();
 		
+	}
+	
+	protected void htmlReimbursement(PrintWriter pw, EmployeeReimbursement reimbursement) {
+		pw.println("<div>");
+		pw.println("<p>");
+		pw.println("Reimbursement ID :"+reimbursement.getId());
+		pw.println("</p>");
+		pw.println("<p>");
+		pw.println("Amount :"+reimbursement.getAmount());
+		pw.println("</p>");
+		if (reimbursement.getDesc() != null) {
+			pw.println("<p>");
+			pw.println("Description :"+reimbursement.getDesc());
+			pw.println("</p>");
+		}
+		pw.println("<p>");
+		pw.println("Submitted :"+reimbursement.getSubmitted());
+		pw.println("</p>");
+		if (reimbursement.getResolved() != null) {
+			pw.println("<p>");
+			pw.println("Resolved :"+reimbursement.getResolved());
+			pw.println("</p>");
+		}
+		pw.println("<p>");
+		pw.println("Author :"+reimbursement.getAuthor().getFirstname()+" "+reimbursement.getAuthor().getLastname());
+		pw.println("</p>");
+		if (reimbursement.getResolver() != null) {
+			pw.println("<p>");
+			pw.println("Resolver :"+reimbursement.getResolver().getFirstname()+" "+reimbursement.getResolver().getLastname());
+			pw.println("</p>");
+		}
+		pw.println("<p>");
+		pw.println("Type :"+reimbursement.getType().getType());
+		pw.println("</p>");
+		pw.println("<p>");
+		pw.println("Status :"+reimbursement.getStatus().getStatus());
+		pw.println("</p>");
+		if (reimbursement.getReceipt() != null) {
+			pw.println("<p>");
+			pw.println("<img src=\"data:image/*;base64,"+Base64.getEncoder().encodeToString(reimbursement.getReceipt())+"\" alt=\"nada\">");
+			pw.println("</p>");
+		}
+		pw.println("</div>");
+	}
+	
+	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		res.sendRedirect("reimbursements/emp/"+req.getParameter("EID"));
 	}
 }

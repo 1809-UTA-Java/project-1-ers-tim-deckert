@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -25,7 +26,6 @@ public class EmployeeDisplayServlet extends HttpServlet {
 		User myGuy = (User) sess.getAttribute("currentUser");
 		
 		String path = req.getPathInfo();
-		String[] pathSplits = path.split("/");
 		
 		resp.setContentType("text/html");
 		PrintWriter pw = resp.getWriter();
@@ -38,7 +38,6 @@ public class EmployeeDisplayServlet extends HttpServlet {
 		pw.println("<body>");
 		
 		EmployeeUserDao eud = new EmployeeUserDao();
-		ObjectMapper om = new XmlMapper();
 		
 		if((path == null || path.equals("/")) && myGuy instanceof ManagerUser) {
 			List<EmployeeUser>employees = eud.getEmployees();
@@ -47,15 +46,21 @@ public class EmployeeDisplayServlet extends HttpServlet {
 				pw.println("<p>");
 				pw.println("Username :"+employee.getUsername());
 				pw.println("</p>");
-				pw.println("<p>");
-				pw.println("First Name :"+employee.getFirstname());
-				pw.println("</p>");
-				pw.println("<p>");
-				pw.println("Last Name :"+employee.getLastname());
-				pw.println("</p>");
-				pw.println("<p>");
-				pw.println("E-mail :"+employee.getEmail());
-				pw.println("</p>");
+				if (employee.getFirstname() != null) {
+					pw.println("<p>");
+					pw.println("First Name :"+employee.getFirstname());
+					pw.println("</p>");
+				}
+				if (employee.getLastname() != null) {
+					pw.println("<p>");
+					pw.println("Last Name :"+employee.getLastname());
+					pw.println("</p>");
+				}
+				if (employee.getEmail() != null) {
+					pw.println("<p>");
+					pw.println("E-mail :"+employee.getEmail());
+					pw.println("</p>");
+				}
 				pw.println("<p>");
 				pw.println("Role :"+employee.getRole().role());
 				pw.println("</p>");
@@ -63,21 +68,44 @@ public class EmployeeDisplayServlet extends HttpServlet {
 			}
 			
 		} else if (path == null || path.equals("/")) {
-			
-		} else if(pathSplits.length != 2) {
+			RequestDispatcher rd = req.getRequestDispatcher("/");
+			rd.forward(req, resp);
+		} else if(path.split("/").length != 2) {
 			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			return;
-		}
-		
-		int employeeId = Integer.parseInt(pathSplits[1]);
-		EmployeeUser found = eud.getEmployee(employeeId);
-		
-		if(found != null) {
-			String obj = om.writeValueAsString(found);
-			pw.println(obj);
+		} else {
+			String[] pathSplits = path.split("/");
+			int employeeId = Integer.parseInt(pathSplits[1]);
+			EmployeeUser found = eud.getEmployee(employeeId);
+			
+			if(found != null) {
+				pw.println("<div>");
+				pw.println("<p>");
+				pw.println("Username :"+found.getUsername());
+				pw.println("</p>");
+				if (found.getFirstname() != null) {
+					pw.println("<p>");
+					pw.println("First Name :"+found.getFirstname());
+					pw.println("</p>");
+				}
+				if (found.getLastname() != null) {
+					pw.println("<p>");
+					pw.println("Last Name :"+found.getLastname());
+					pw.println("</p>");
+				}
+				if (found.getEmail() != null) {
+					pw.println("<p>");
+					pw.println("E-mail :"+found.getEmail());
+					pw.println("</p>");
+				}
+				pw.println("<p>");
+				pw.println("Role :"+found.getRole().role());
+				pw.println("</p>");
+				pw.println("</div>");
+			}
 		}
 	
-		pw.println("<form action=\"display\" method=\"post\">");
+		pw.println("<form action=\"/ers-servlet/display\" method=\"post\">");
 		pw.println("<button type=\"submit\" name=\"button\" value=\"home\">");
 		pw.println("done");
 		pw.println("</button><br></br>");

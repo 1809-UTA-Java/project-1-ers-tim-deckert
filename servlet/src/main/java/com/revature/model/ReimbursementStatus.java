@@ -19,4 +19,11 @@ public class ReimbursementStatus {
 		rsId = 1;
 		rsStatus = "Pending";
 	}
+	
+	public String getStatus() {
+		return rsStatus;
+	}
+	public Integer getId() {
+		return rsId;
+	}
 }

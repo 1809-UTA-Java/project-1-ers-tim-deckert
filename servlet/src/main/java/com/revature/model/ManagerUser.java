@@ -81,23 +81,23 @@ public class ManagerUser extends EmployeeUser {
 	}
 	
 	public void decide(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
-		RequestDispatcher rd = req.getRequestDispatcher("reimbursements/pending");
-		rd.forward(req, res);
+		//RequestDispatcher rd = req.getRequestDispatcher("descision");
+		res.sendRedirect("descision"); //.forward(req, res);
 	}
 	
 	public void viewAllPending(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
 		//RequestDispatcher rd = req.getRequestDispatcher("reimbursements/pending");
-		res.sendRedirect("reimbursements/pending");
+		res.sendRedirect("reimbursements/Pending");
 	}
 
 	public void viewAllResolved(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
 		//RequestDispatcher rd = req.getRequestDispatcher("reimburesements/resolved");
-		res.sendRedirect("reimbursements/resolved");
+		res.sendRedirect("reimbursements/Resolved");
 	}
 	
 	public void viewEmployeeReimbursements(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
 		//RequestDispatcher rd = req.getRequestDispatcher("reimburesements/emp");
-		res.sendRedirect("reimbursements/emp");
+		res.sendRedirect("emp-rei");
 	}
 	
 	public void viewAllInfo(HttpServletRequest req, HttpServletResponse res) throws MalformedURLException, ProtocolException, IOException, ServletException {
